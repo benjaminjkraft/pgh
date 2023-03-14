@@ -7,15 +7,6 @@ import (
 	"github.com/go-git/go-git/v5"
 )
 
-func head(r *git.Repository, args ...string) error {
-	ref, err := r.Head()
-	if err != nil {
-		return err
-	}
-	fmt.Println(ref)
-	return nil
-}
-
 func diff(r *git.Repository, args ...string) error {
 	head, err := r.Head()
 	if err != nil {
@@ -56,7 +47,6 @@ func diff(r *git.Repository, args ...string) error {
 
 var commands = map[string]func(*git.Repository, ...string) error{
 	"diff": diff,
-	"head": head,
 }
 
 func Main() {
