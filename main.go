@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/go-git/go-git/v5"
+	git "github.com/libgit2/git2go/v28"
 )
 
 type runner struct {
@@ -25,11 +25,12 @@ func Main() {
 		os.Exit(1)
 	}
 
-	r, err := git.PlainOpen(".")
+	r, err := git.OpenRepositoryExtended(".", 0, "")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	defer r.Free()
 
 	err = command(&runner{r, os.Stdout}, os.Args[2:]...)
 	if err != nil {

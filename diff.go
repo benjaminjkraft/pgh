@@ -5,39 +5,32 @@ import (
 )
 
 func diff(runner *runner, args ...string) error {
-	head, err := runner.repo.Head()
+	headID, err := referenceNameToID(runner.repo, "HEAD")
 	if err != nil {
 		return err
 	}
-	headCommit, err := runner.repo.CommitObject(head.Hash())
+	headCommit, err := runner.repo.LookupCommit(headID)
 	if err != nil {
 		return err
 	}
-	switch headCommit.NumParents() {
+
+	switch headCommit.ParentCount() {
 	case 0:
 		return fmt.Errorf("can't diff on initial commit")
 	case 1:
 	default:
 		return fmt.Errorf("can't diff on merge commit")
 	}
+	parent := headCommit.Parent(0)
 
-	parent, err := headCommit.Parent(0)
+	mainID, err := referenceNameToID(runner.repo, "refs/heads/main")
 	if err != nil {
 		return err
 	}
-
-	mainBranch, err := runner.repo.Branch("main")
-	if err != nil {
-		return err
+	if *parent.Id() != *mainID {
+		return fmt.Errorf("TODO: must be one commit ahead of main for now, but parent was %v and main is %v", parent.Id(), mainID)
 	}
-	main, err := runner.repo.Reference(mainBranch.Merge, true)
-	if err != nil {
-		return err
-	}
-	if parent.Hash != main.Hash() {
-		return fmt.Errorf("TODO: must be one commit ahead of main for now, but parent was %v and main is %v", parent.Hash, main.Hash())
-	}
-	fmt.Println(parent, main)
+	fmt.Fprintln(runner.out, "parent", parent.Id(), parent.Message())
 
 	return nil
 }
