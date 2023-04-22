@@ -12,9 +12,12 @@ If we don't destack, other than the user-visible interactive rebase in `pgh pull
 
 ### pgh pr
 
-1. We must be one commit ahead of the tip of our (possibly trivial) stack.
-2. We push the existing stack, if any.
-3. We cherry-pick the top commit onto the head of the top branch of the stack, push that to a new branch, and create a PR against the previously top branch of the stack for that new branch.
+(or maybe `pgh diff`, after `arc`)
+
+1. We must be on a commit that's not already in a PR.
+   1. For now, probably say we have to be one commit ahead.
+   2. For now, also probably at the top of our stack/not in an interative rebase; can implement later to insert a commit in the middle of the stack.
+2. We cherry-pick the top commit onto the head of the top branch of the stack, push that to a new branch, and create a PR against the previously top branch of the stack for that new branch.
 
 (This could be merged into push, but I think it will be a better UX without.)
 
