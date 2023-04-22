@@ -79,7 +79,7 @@ func TestDiffSmoke(t *testing.T) {
 	}
 	must(err)
 	var b strings.Builder
-	runner := &runner{repo, &b}
+	runner := &runner{repo, nil, &b}
 
 	err = diff(runner)
 	must(err)

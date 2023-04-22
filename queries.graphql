@@ -1,0 +1,13 @@
+query getRepoID($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) { id }
+}
+
+# @genqlient(for: "CreatePullRequestInput.clientMutationId", omitempty: true)
+# @genqlient(for: "CreatePullRequestInput.headRepositoryId", omitempty: true)
+mutation createPR(
+  $input: CreatePullRequestInput!,
+) {
+  createPullRequest(input: $input) {
+    pullRequest { url }
+  }
+}

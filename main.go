@@ -5,12 +5,14 @@ import (
 	"io"
 	"os"
 
+	"github.com/Khan/genqlient/graphql"
 	git "github.com/libgit2/git2go/v28"
 )
 
 type runner struct {
-	repo *git.Repository
-	out  io.Writer
+	repo   *git.Repository
+	client graphql.Client
+	out    io.Writer
 }
 
 var commands = map[string]func(*runner, ...string) error{
@@ -32,7 +34,11 @@ func Main() {
 	}
 	defer r.Free()
 
-	err = command(&runner{r, os.Stdout}, os.Args[2:]...)
+	err = command(&runner{
+		repo:   r,
+		client: client(os.Getenv("GITHUB_TOKEN")),
+		out:    os.Stdout,
+	}, os.Args[2:]...)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
