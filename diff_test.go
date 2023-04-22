@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -16,6 +17,7 @@ func runCommands(cwd string, commands string) error {
 		if cleaned == "" {
 			continue
 		}
+		fmt.Println("+ " + cleaned)
 		cmd := &exec.Cmd{
 			Path:   "/bin/sh",
 			Args:   []string{"sh", "-c", cleaned},
@@ -46,11 +48,12 @@ func makeTestRepo() (repo *git.Repository, cleanup func(), err error) {
 
 	err = runCommands(tmpdir, `
 		git init
+		git remote add origin git@github.com:benjaminjkraft/pgh.test.git
 		echo content >content
 		git add content
 		git commit -am "Initial commit"
 		git branch -M main
-		git checkout -b mybranch
+		git push -f -u origin main
 		echo updated content >content
 		git commit -am "Another commit"
 	`)
@@ -79,7 +82,7 @@ func TestDiffSmoke(t *testing.T) {
 	}
 	must(err)
 	var b strings.Builder
-	runner := &runner{repo, nil, &b}
+	runner := &runner{context.Background(), repo, client(mustGetToken()), &b}
 
 	err = diff(runner)
 	must(err)

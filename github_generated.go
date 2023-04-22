@@ -3,6 +3,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/Khan/genqlient/graphql"
 )
 
@@ -147,6 +149,7 @@ mutation createPR ($input: CreatePullRequestInput!) {
 `
 
 func createPR(
+	ctx context.Context,
 	client graphql.Client,
 	input CreatePullRequestInput,
 ) (*createPRResponse, error) {
@@ -163,7 +166,7 @@ func createPR(
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(
-		nil,
+		ctx,
 		req,
 		resp,
 	)
@@ -181,6 +184,7 @@ query getRepoID ($owner: String!, $name: String!) {
 `
 
 func getRepoID(
+	ctx context.Context,
 	client graphql.Client,
 	owner string,
 	name string,
@@ -199,7 +203,7 @@ func getRepoID(
 	resp := &graphql.Response{Data: &data}
 
 	err = client.MakeRequest(
-		nil,
+		ctx,
 		req,
 		resp,
 	)

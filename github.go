@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/Khan/genqlient/graphql"
 )
@@ -22,6 +23,14 @@ func client(token string) graphql.Client {
 			wrapped: http.DefaultTransport,
 			token:   token,
 		}})
+}
+
+func mustGetToken() string {
+	token := os.Getenv("GITHUB_TOKEN")
+	if token == "" {
+		panic("need to set GITHUB_TOKEN")
+	}
+	return token
 }
 
 //go:generate go run github.com/Khan/genqlient

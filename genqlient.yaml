@@ -8,5 +8,3 @@ bindings:
     type: time.Time
   URI:
     type: string
-
-context_type: "-"  # TODO

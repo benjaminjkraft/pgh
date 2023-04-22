@@ -46,6 +46,8 @@ We need to keep, for each commit in the stack:
 
 We need to put something in annotations so it is preserved when the user does a rebase. But putting all of this is probably too much. Probably the best thing is to put in a "pull request URL", and then just keep everything else indexed by that in git config or a file in `.git` or something?
 
+Or do we need all that stuff? Can we just get everything from the PR and/or cache locally as an optimization?
+
 ## Open questions
 
 - Do we need to do anything fancy to allow multiple stacks?

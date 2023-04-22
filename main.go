@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -10,6 +11,7 @@ import (
 )
 
 type runner struct {
+	ctx    context.Context
 	repo   *git.Repository
 	client graphql.Client
 	out    io.Writer
@@ -35,8 +37,9 @@ func Main() {
 	defer r.Free()
 
 	err = command(&runner{
+		ctx:    context.Background(),
 		repo:   r,
-		client: client(os.Getenv("GITHUB_TOKEN")),
+		client: client(mustGetToken()),
 		out:    os.Stdout,
 	}, os.Args[2:]...)
 	if err != nil {
