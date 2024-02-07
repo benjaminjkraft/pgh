@@ -50,6 +50,7 @@ func makeTestRepo() (tmpdir string, repo *git.Repository, cleanup func(), err er
 	err = runCommands(tmpdir, `
 		git init
 		echo content >content
+		echo untracked >untracked
 		git add content
 		git commit -am "Initial commit"
 		git branch -M main
@@ -65,6 +66,18 @@ func makeTestRepo() (tmpdir string, repo *git.Repository, cleanup func(), err er
 
 	repo, err = git.PlainOpen(tmpdir)
 	return tmpdir, repo, cleanup, err
+}
+
+func assertFileHasContent(t *testing.T, filename, expectedContent string) {
+	content, err := os.ReadFile(filename)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	cleanedContent := strings.TrimSpace(string(content))
+	if cleanedContent != expectedContent {
+		t.Errorf("content wrong, want '%s' got '%s'", expectedContent, cleanedContent)
+	}
 }
 
 func TestFakeMerge(t *testing.T) {
@@ -85,12 +98,8 @@ func TestFakeMerge(t *testing.T) {
 	err = fakeMerge(runner, "main")
 	must(err)
 
-	content, err := os.ReadFile(path.Join(tmpdir, "content"))
-	must(err)
-	cleanedContent := strings.TrimSpace(string(content))
-	if cleanedContent != "main content" {
-		t.Errorf("content wrong, got '%s'", cleanedContent)
-	}
+	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
+	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
 
 	must(runCommands(tmpdir, `
 		git --no-pager log --branches --graph --decorate --pretty=fuller

@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os/exec"
 
+	"github.com/go-git/go-billy/v5/helper/chroot"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -76,13 +78,14 @@ func fakeMerge(runner *runner, args ...string) error {
 		return err
 	}
 
-	err = wt.Reset(&git.ResetOptions{
-		Commit: mergeHash,
-		Mode:   git.HardReset,
-	})
-	if err != nil {
-		return err
+	// Shell out to work around incorrect behavior of Worktree.Reset
+	// https://github.com/src-d/go-git/issues/1026#issue-382413262
+	ch, ok := wt.Filesystem.(*chroot.ChrootHelper)
+	if !ok {
+		return fmt.Errorf("not implemented: %T", wt.Filesystem)
 	}
+	gitdir := ch.Root()
+	err = exec.Command("git", "-C", gitdir, "reset", "--hard", mergeHash.String()).Run()
 
 	return nil
 }
