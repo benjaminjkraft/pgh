@@ -22,3 +22,7 @@ thoughts on what to prioritize Jan 2024:
 - start with a command to do the `merge -X` thing, since that's not really possible rn
 - then automate the "walk-up-the-stack" part
 - then actually tie it together, do all the silly mechanics
+
+for fake-merge:
+- default to upstream
+- echo something useful
