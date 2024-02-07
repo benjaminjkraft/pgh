@@ -14,7 +14,8 @@ type runner struct {
 }
 
 var commands = map[string]func(*runner, ...string) error{
-	"diff": diff,
+	"diff":       diff,
+	"fake-merge": fakeMerge,
 }
 
 func Main() {
