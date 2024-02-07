@@ -12,6 +12,7 @@ import (
 	"github.com/go-git/go-git/v5/storage/memory"
 )
 
+// TODO(benkraft): replace with the shell setup in fake_merge_test.go
 func TestDiffSmoke(t *testing.T) {
 	must := func(err error) {
 		if err != nil {

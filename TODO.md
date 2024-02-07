@@ -16,3 +16,9 @@ immediate TODO:
 - will not having merge implemented be an issue?
   - prob not actually, just need to create merge commits but
     we know what all the trees should look like I think?
+
+thoughts on what to prioritize Jan 2024:
+- make it useful today
+- start with a command to do the `merge -X` thing, since that's not really possible rn
+- then automate the "walk-up-the-stack" part
+- then actually tie it together, do all the silly mechanics
