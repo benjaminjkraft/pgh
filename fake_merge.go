@@ -25,6 +25,13 @@ func fakeMerge(runner *runner, args ...string) error {
 	if err != nil {
 		return err
 	}
+	// TODO: test this case (main is a symbolic-ref)
+	for otherRef.Type() == plumbing.SymbolicReference {
+		otherRef, err = runner.repo.Reference(otherRef.Target(), false)
+		if err != nil {
+			return err
+		}
+	}
 	otherCommit, err := runner.repo.CommitObject(otherRef.Hash())
 	if err != nil {
 		return err
