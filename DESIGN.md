@@ -12,12 +12,9 @@ If we don't destack, other than the user-visible interactive rebase in `pgh pull
 
 ### pgh pr
 
-(or maybe `pgh diff`, after `arc`)
-
-1. We must be on a commit that's not already in a PR.
-   1. For now, probably say we have to be one commit ahead.
-   2. For now, also probably at the top of our stack/not in an interative rebase; can implement later to insert a commit in the middle of the stack.
-2. We cherry-pick the top commit onto the head of the top branch of the stack, push that to a new branch, and create a PR against the previously top branch of the stack for that new branch.
+1. We must be one commit ahead of the tip of our (possibly trivial) stack.
+2. We push the existing stack, if any.
+3. We cherry-pick the top commit onto the head of the top branch of the stack, push that to a new branch, and create a PR against the previously top branch of the stack for that new branch.
 
 (This could be merged into push, but I think it will be a better UX without.)
 
@@ -45,8 +42,6 @@ We need to keep, for each commit in the stack:
 - the previous version of this commit (I think only needed for destacking?)
 
 We need to put something in annotations so it is preserved when the user does a rebase. But putting all of this is probably too much. Probably the best thing is to put in a "pull request URL", and then just keep everything else indexed by that in git config or a file in `.git` or something?
-
-Or do we need all that stuff? Can we just get everything from the PR and/or cache locally as an optimization?
 
 ## Open questions
 

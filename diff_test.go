@@ -1,69 +1,16 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"os"
-	"os/exec"
 	"strings"
 	"testing"
 
-	git "github.com/libgit2/git2go/v28"
+	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-billy/v5/util"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/storage/memory"
 )
-
-func runCommands(cwd string, commands string) error {
-	for _, line := range strings.Split(commands, "\n") {
-		cleaned := strings.TrimSpace(line)
-		if cleaned == "" {
-			continue
-		}
-		fmt.Println("+ " + cleaned)
-		cmd := &exec.Cmd{
-			Path:   "/bin/sh",
-			Args:   []string{"sh", "-c", cleaned},
-			Dir:    cwd,
-			Stdout: os.Stdout,
-			Stderr: os.Stderr,
-		}
-		err := cmd.Run()
-		if err != nil {
-			return fmt.Errorf("cmd `%v` failed: %w", cleaned, err)
-		}
-	}
-	return nil
-}
-
-func makeTestRepo() (repo *git.Repository, cleanup func(), err error) {
-	tmpdir, err := os.MkdirTemp("", "pgh_test_")
-	if err != nil {
-		return nil, nil, err
-	}
-
-	cleanup = func() {
-		if repo != nil {
-			repo.Free()
-		}
-		os.RemoveAll(tmpdir)
-	}
-
-	err = runCommands(tmpdir, `
-		git init
-		git remote add origin git@github.com:benjaminjkraft/pgh.test.git
-		echo content >content
-		git add content
-		git commit -am "Initial commit"
-		git branch -M main
-		git push -f -u origin main
-		echo updated content >content
-		git commit -am "Another commit"
-	`)
-	if err != nil {
-		return nil, cleanup, err
-	}
-
-	repo, err = git.OpenRepository(tmpdir)
-	return repo, cleanup, err
-}
 
 func TestDiffSmoke(t *testing.T) {
 	must := func(err error) {
@@ -72,17 +19,33 @@ func TestDiffSmoke(t *testing.T) {
 		}
 	}
 
-	debug := os.Getenv("TEST_DEBUG") != ""
-
-	repo, cleanup, err := makeTestRepo()
-	if debug {
-		fmt.Println("repo:", repo.Workdir())
-	} else if cleanup != nil {
-		defer cleanup()
-	}
+	fs := memfs.New()
+	r, err := git.Init(memory.NewStorage(), fs)
+	must(err)
+	w, err := r.Worktree()
 	must(err)
 	var b strings.Builder
-	runner := &runner{context.Background(), repo, client(mustGetToken()), &b}
+	runner := &runner{r, &b}
+
+	// make a commit
+	err = util.WriteFile(fs, "a", []byte("content\n"), 0o644)
+	must(err)
+	_, err = w.Add(".")
+	must(err)
+	h, err := w.Commit("initial commit", &git.CommitOptions{All: true})
+	must(err)
+
+	// make main point to it
+	err = r.CreateBranch(&config.Branch{Name: "main", Remote: "origin", Merge: "refs/heads/main"})
+	must(err)
+	err = r.Storer.SetReference(plumbing.NewHashReference("refs/heads/main", h))
+	must(err)
+
+	// make another commit
+	err = util.WriteFile(fs, "a", []byte("updated content\n"), 0o644)
+	must(err)
+	_, err = w.Commit("initial commit", &git.CommitOptions{All: true})
+	must(err)
 
 	err = diff(runner)
 	must(err)
