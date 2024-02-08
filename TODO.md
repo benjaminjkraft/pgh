@@ -24,3 +24,4 @@ thoughts on what to prioritize Jan 2024:
 - then actually tie it together, do all the silly mechanics
 
 for fake-merge:
+- newline in status output
