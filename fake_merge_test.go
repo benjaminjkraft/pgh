@@ -34,21 +34,31 @@ func runCommands(cwd string, commands string) error {
 	return nil
 }
 
-func makeTestRepo() (tmpdir string, repo *git.Repository, cleanup func(), err error) {
-	tmpdir, err = os.MkdirTemp("", "pgh_test_")
+func must(t *testing.T, err error) {
 	if err != nil {
-		return tmpdir, nil, nil, err
+		t.Fatal(err)
 	}
+}
+
+func makeTestRepo(t *testing.T) (tmpdir string, repo *git.Repository) {
+	tmpdir, err := os.MkdirTemp("", "pgh_test_")
+	must(t, err)
 	if debug {
 		fmt.Println("repo:", tmpdir)
+	} else {
+		t.Cleanup(func() {
+			os.RemoveAll(tmpdir)
+		})
 	}
 
-	cleanup = func() {
-		os.RemoveAll(tmpdir)
-	}
+	must(t, runCommands(tmpdir, `git init`))
+	repo, err = git.PlainOpen(tmpdir)
+	must(t, err)
+	return tmpdir, repo
+}
 
-	err = runCommands(tmpdir, `
-		git init
+func commitTwoBranches(t *testing.T, tmpdir string) {
+	must(t, runCommands(tmpdir, `
 		echo content >content
 		echo untracked >untracked
 		git add content
@@ -60,13 +70,7 @@ func makeTestRepo() (tmpdir string, repo *git.Repository, cleanup func(), err er
 		git branch mybranch -u main
 		echo branch content >content
 		git commit -am "Branch commit"
-	`)
-	if err != nil {
-		return tmpdir, nil, cleanup, err
-	}
-
-	repo, err = git.PlainOpen(tmpdir)
-	return tmpdir, repo, cleanup, err
+	`))
 }
 
 func assertFileHasContent(t *testing.T, filename, expectedContent string) {
@@ -82,54 +86,36 @@ func assertFileHasContent(t *testing.T, filename, expectedContent string) {
 }
 
 func TestFakeMerge(t *testing.T) {
-	must := func(err error) {
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	tmpdir, repo, cleanup, err := makeTestRepo()
-	if !debug && cleanup != nil {
-		defer cleanup()
-	}
-	must(err)
+	tmpdir, repo := makeTestRepo(t)
+	commitTwoBranches(t, tmpdir)
 	var b strings.Builder
 	runner := &runner{repo, &b}
 
-	err = fakeMerge(runner, "main")
-	must(err)
+	err := fakeMerge(runner, "main")
+	must(t, err)
 
 	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
 	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
 
-	must(runCommands(tmpdir, `
+	must(t, runCommands(tmpdir, `
 		git --no-pager log --branches --graph --decorate --pretty=fuller
 	`))
 	// TODO: Assert the commit graph, details, etc. are right.
 }
 
 func TestFakeMergeNoArgs(t *testing.T) {
-	must := func(err error) {
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	tmpdir, repo, cleanup, err := makeTestRepo()
-	if !debug && cleanup != nil {
-		defer cleanup()
-	}
-	must(err)
+	tmpdir, repo := makeTestRepo(t)
+	commitTwoBranches(t, tmpdir)
 	var b strings.Builder
 	runner := &runner{repo, &b}
 
-	err = fakeMerge(runner)
-	must(err)
+	err := fakeMerge(runner)
+	must(t, err)
 
 	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
 	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
 
-	must(runCommands(tmpdir, `
+	must(t, runCommands(tmpdir, `
 		git --no-pager log --branches --graph --decorate --pretty=fuller
 	`))
 	// TODO: Assert the commit graph, details, etc. are right.
