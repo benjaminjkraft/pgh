@@ -1,12 +1,11 @@
 package main
 
 import (
-	"strings"
 	"testing"
 )
 
 func TestDiffSmoke(t *testing.T) {
-	tmpdir, repo := makeTestRepo(t)
+	tmpdir, runner := makeTestRepo(t)
 
 	must(t, runCommands(tmpdir, `
 		echo content >content
@@ -21,9 +20,6 @@ func TestDiffSmoke(t *testing.T) {
 		echo updated content >content
 		git commit -am "New commit"
 	`))
-
-	var b strings.Builder
-	runner := &runner{repo, &b}
 
 	must(t, diff(runner))
 }

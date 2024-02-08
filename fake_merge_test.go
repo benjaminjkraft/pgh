@@ -41,7 +41,7 @@ func must(t *testing.T, err error) {
 	}
 }
 
-func makeTestRepo(t *testing.T) (tmpdir string, repo *git.Repository) {
+func makeTestRepo(t *testing.T) (tmpdir string, r *runner) {
 	tmpdir, err := os.MkdirTemp("", "pgh_test_")
 	must(t, err)
 	if debug {
@@ -53,9 +53,11 @@ func makeTestRepo(t *testing.T) (tmpdir string, repo *git.Repository) {
 	}
 
 	must(t, runCommands(tmpdir, `git init`))
-	repo, err = git.PlainOpen(tmpdir)
+	repo, err := git.PlainOpen(tmpdir)
 	must(t, err)
-	return tmpdir, repo
+
+	var b strings.Builder
+	return tmpdir, &runner{repo, &b}
 }
 
 func commitTwoBranches(t *testing.T, tmpdir string) {
@@ -87,10 +89,8 @@ func assertFileHasContent(t *testing.T, filename, expectedContent string) {
 }
 
 func TestFakeMerge(t *testing.T) {
-	tmpdir, repo := makeTestRepo(t)
+	tmpdir, runner := makeTestRepo(t)
 	commitTwoBranches(t, tmpdir)
-	var b strings.Builder
-	runner := &runner{repo, &b}
 
 	err := fakeMerge(runner, "main")
 	must(t, err)
@@ -105,10 +105,8 @@ func TestFakeMerge(t *testing.T) {
 }
 
 func TestFakeMergeNoArgs(t *testing.T) {
-	tmpdir, repo := makeTestRepo(t)
+	tmpdir, runner := makeTestRepo(t)
 	commitTwoBranches(t, tmpdir)
-	var b strings.Builder
-	runner := &runner{repo, &b}
 
 	err := fakeMerge(runner)
 	must(t, err)
