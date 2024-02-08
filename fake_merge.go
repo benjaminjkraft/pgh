@@ -10,21 +10,45 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
-func fakeMerge(runner *runner, args ...string) error {
-	if len(args) != 1 {
-		return fmt.Errorf("usage: fake-merge branch-name")
+// TODO(benkraft): unit tests
+func upstream(runner *runner, ref *plumbing.Reference) plumbing.ReferenceName {
+	if !ref.Name().IsBranch() {
+		return ""
 	}
-	other := args[0]
+	b, err := runner.repo.Branch(ref.Name().Short())
+	if err != nil {
+		return ""
+	}
+	if b.Remote == "." {
+		return b.Merge
+	}
+	return plumbing.NewRemoteReferenceName(b.Remote, b.Merge.Short())
+}
 
+func fakeMerge(runner *runner, args ...string) error {
 	head, err := runner.repo.Head()
 	if err != nil {
 		return err
 	}
 
-	otherRef, err := runner.repo.Reference(plumbing.NewBranchReferenceName(other), false)
+	var otherRefName plumbing.ReferenceName
+	switch len(args) {
+	case 0:
+		otherRefName = upstream(runner, head)
+		if otherRefName == "" {
+			return fmt.Errorf("no upstream for %v, so must pass branch-name", head.Name())
+		}
+	case 1:
+		otherRefName = plumbing.NewBranchReferenceName(args[0])
+	default:
+		return fmt.Errorf("usage: fake-merge [branch-name]")
+	}
+
+	otherRef, err := runner.repo.Reference(otherRefName, false)
 	if err != nil {
 		return err
 	}
+
 	// TODO: test this case (main is a symbolic-ref)
 	for otherRef.Type() == plumbing.SymbolicReference {
 		otherRef, err = runner.repo.Reference(otherRef.Target(), false)

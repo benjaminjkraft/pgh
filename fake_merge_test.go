@@ -57,6 +57,7 @@ func makeTestRepo() (tmpdir string, repo *git.Repository, cleanup func(), err er
 		echo main content >content
 		git commit -am "Main commit"
 		git checkout main^ -b mybranch
+		git branch mybranch -u main
 		echo branch content >content
 		git commit -am "Branch commit"
 	`)
@@ -96,6 +97,33 @@ func TestFakeMerge(t *testing.T) {
 	runner := &runner{repo, &b}
 
 	err = fakeMerge(runner, "main")
+	must(err)
+
+	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
+	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
+
+	must(runCommands(tmpdir, `
+		git --no-pager log --branches --graph --decorate --pretty=fuller
+	`))
+	// TODO: Assert the commit graph, details, etc. are right.
+}
+
+func TestFakeMergeNoArgs(t *testing.T) {
+	must := func(err error) {
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	tmpdir, repo, cleanup, err := makeTestRepo()
+	if !debug && cleanup != nil {
+		defer cleanup()
+	}
+	must(err)
+	var b strings.Builder
+	runner := &runner{repo, &b}
+
+	err = fakeMerge(runner)
 	must(err)
 
 	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
