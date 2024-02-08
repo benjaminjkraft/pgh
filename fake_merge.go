@@ -117,6 +117,11 @@ func fakeMerge(runner *runner, args ...string) error {
 	}
 	gitdir := ch.Root()
 	err = exec.Command("git", "-C", gitdir, "reset", "--hard", mergeHash.String()).Run()
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintf(runner.out, "fake-merged %s", otherRefName)
 
 	return nil
 }
