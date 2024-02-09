@@ -24,3 +24,9 @@ thoughts on what to prioritize Jan 2024:
 - then actually tie it together, do all the silly mechanics
 
 for fake-merge:
+
+for walk-up:
+- worktree? prob easier to not, you want to end up at the top anyway, be able to resolve conflicts, etc. (maybe option later.)
+- how does pause/resume for conflicts work? (for stack: just run again, tree would be nice though. add later.)
+- do rebase for unpushed branches? eh, maybe not, can always do that on top
+- do auto-push? as option maybe to start, sniffing will be fragile

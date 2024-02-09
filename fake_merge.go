@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/go-git/go-billy/v5/helper/chroot"
@@ -11,16 +12,19 @@ import (
 )
 
 // TODO(benkraft): unit tests
-func upstream(runner *runner, refName plumbing.ReferenceName) plumbing.ReferenceName {
+func upstream(repo *git.Repository, refName plumbing.ReferenceName, includeRemote bool) plumbing.ReferenceName {
 	if !refName.IsBranch() {
 		return ""
 	}
-	b, err := runner.repo.Branch(refName.Short())
+	b, err := repo.Branch(refName.Short())
 	if err != nil {
 		return ""
 	}
+
 	if b.Remote == "." {
 		return b.Merge
+	} else if !includeRemote {
+		return ""
 	}
 	return plumbing.NewRemoteReferenceName(b.Remote, b.Merge.Short())
 }
@@ -34,7 +38,7 @@ func fakeMerge(runner *runner, args ...string) error {
 	var otherRefName plumbing.ReferenceName
 	switch len(args) {
 	case 0:
-		otherRefName = upstream(runner, head.Name())
+		otherRefName = upstream(runner.repo, head.Name(), true)
 		if otherRefName == "" {
 			return fmt.Errorf("no upstream for %v, so must pass branch-name", head.Name())
 		}
@@ -104,19 +108,9 @@ func fakeMerge(runner *runner, args ...string) error {
 		return err
 	}
 
-	wt, err := runner.repo.Worktree()
-	if err != nil {
-		return err
-	}
-
 	// Shell out to work around incorrect behavior of Worktree.Reset
 	// https://github.com/src-d/go-git/issues/1026#issue-382413262
-	ch, ok := wt.Filesystem.(*chroot.ChrootHelper)
-	if !ok {
-		return fmt.Errorf("not implemented: %T", wt.Filesystem)
-	}
-	gitdir := ch.Root()
-	err = exec.Command("git", "-C", gitdir, "reset", "--hard", mergeHash.String()).Run()
+	err = callGit(runner, "reset", "--hard", mergeHash.String())
 	if err != nil {
 		return err
 	}
@@ -124,6 +118,24 @@ func fakeMerge(runner *runner, args ...string) error {
 	fmt.Fprintf(runner.out, "fake-merged %s\n", otherRefName)
 
 	return nil
+}
+
+func callGit(runner *runner, args ...string) error {
+	wt, err := runner.repo.Worktree()
+	if err != nil {
+		return err
+	}
+
+	ch, ok := wt.Filesystem.(*chroot.ChrootHelper)
+	if !ok {
+		return fmt.Errorf("not implemented: %T", wt.Filesystem)
+	}
+	gitdir := ch.Root()
+
+	cmd := exec.Command("git", append([]string{"-C", gitdir}, args...)...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 func mergeCommitMessage(other, head *plumbing.Reference) string {

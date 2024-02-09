@@ -88,6 +88,23 @@ func assertFileHasContent(t *testing.T, filename, expectedContent string) {
 	}
 }
 
+func assertFileHasConflict(t *testing.T, filename string) {
+	content, err := os.ReadFile(filename)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if !strings.Contains(string(content), "\n>>>>>>> ") {
+		t.Errorf("content wrong, want conflict got '%s'", content)
+	}
+}
+
+func showLog(t *testing.T, tmpdir string) {
+	must(t, runCommands(tmpdir, `
+		git --no-pager log --branches --graph --decorate --pretty=fuller -p
+	`))
+}
+
 func TestFakeMerge(t *testing.T) {
 	tmpdir, runner := makeTestRepo(t)
 	commitTwoBranches(t, tmpdir)
@@ -97,11 +114,8 @@ func TestFakeMerge(t *testing.T) {
 
 	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
 	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
-
-	must(t, runCommands(tmpdir, `
-		git --no-pager log --branches --graph --decorate --pretty=fuller
-	`))
 	// TODO: Assert the commit graph, details, etc. are right.
+	showLog(t, tmpdir)
 }
 
 func TestFakeMergeNoArgs(t *testing.T) {

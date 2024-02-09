@@ -8,6 +8,7 @@ import (
 	"github.com/go-git/go-git/v5"
 )
 
+// TODO: put repo root in runner, simplify tmpdr plumbing + recomputing etc
 type runner struct {
 	repo *git.Repository
 	out  io.Writer
@@ -16,6 +17,7 @@ type runner struct {
 var commands = map[string]func(*runner, ...string) error{
 	"diff":       diff,
 	"fake-merge": fakeMerge,
+	"merge-up":   mergeUp,
 }
 
 func Main() {
