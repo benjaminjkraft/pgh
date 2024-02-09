@@ -29,7 +29,6 @@ var commands map[string]func(*runner, ...string) error
 
 func init() {
 	commands = map[string]func(*runner, ...string) error{
-		"diff":       diff,
 		"fake-merge": fakeMerge,
 		"merge-up":   mergeUp,
 		"-h":         help,
