@@ -1,0 +1,57 @@
+*   commit 45154e2554856903022908da6d076646706b9eb2 (HEAD -> mybranch)
+|\  Merge: 7233f1a d5f0524
+| | Author:     Testy McTestFace <test@example.com>
+| | AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| | Commit:     Testy McTestFace <test@example.com>
+| | CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| | 
+| |     Merge branch 'main' into 'mybranch', clobbering all changes
+| | 
+| * commit d5f0524339d760e2b70820f1e389ff68bf994cb9 (main)
+| | Author:     Testy McTestFace <test@example.com>
+| | AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| | Commit:     Testy McTestFace <test@example.com>
+| | CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| | 
+| |     Main commit
+| | 
+| | diff --git content content
+| | index d95f3ad..bcb9dca 100644
+| | --- content
+| | +++ content
+| | @@ -1 +1 @@
+| | -content
+| | +main content
+| | 
+* | commit 7233f1a707f8daea72056598fbc630a78630ed3d
+|/  Author:     Testy McTestFace <test@example.com>
+|   AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+|   Commit:     Testy McTestFace <test@example.com>
+|   CommitDate: Sat Apr 1 12:34:56 2023 +0000
+|   
+|       Branch commit
+|   
+|   diff --git content content
+|   index d95f3ad..5152a79 100644
+|   --- content
+|   +++ content
+|   @@ -1 +1 @@
+|   -content
+|   +branch content
+| 
+* commit e3212acb8054392f4f9627b86b4e1a569ee62b9b
+  Author:     Testy McTestFace <test@example.com>
+  AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+  Commit:     Testy McTestFace <test@example.com>
+  CommitDate: Sat Apr 1 12:34:56 2023 +0000
+  
+      Initial commit
+  
+  diff --git content content
+  new file mode 100644
+  index 0000000..d95f3ad
+  --- /dev/null
+  +++ content
+  @@ -0,0 +1 @@
+  +content
+

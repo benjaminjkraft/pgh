@@ -43,7 +43,7 @@ func TestMergeUp(t *testing.T) {
 	assertFileHasContent(t, path.Join(tmpdir, "content"), "b3 content")
 	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
 	assertFileHasContent(t, path.Join(tmpdir, "other"), "other")
-	showLog(t, tmpdir)
+	snapshotLog(t, tmpdir)
 }
 
 func TestMergeUpConflict(t *testing.T) {
@@ -65,5 +65,5 @@ func TestMergeUpConflict(t *testing.T) {
 
 	assertFileHasConflict(t, path.Join(tmpdir, "content"))
 	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
-	showLog(t, tmpdir)
+	snapshotLog(t, tmpdir)
 }

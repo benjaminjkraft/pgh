@@ -1,0 +1,80 @@
+* commit c877a6e705833efdb686cdaeca349aa6676247b3 (b3)
+| Author:     Testy McTestFace <test@example.com>
+| AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| Commit:     Testy McTestFace <test@example.com>
+| CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| 
+|     b3 commit
+| 
+| diff --git content content
+| index a77bec4..33169c6 100644
+| --- content
+| +++ content
+| @@ -1 +1 @@
+| -b2 content
+| +b3 content
+| 
+* commit 10879150fc1f4884296c88d2790bc639839d458c (b2)
+| Author:     Testy McTestFace <test@example.com>
+| AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| Commit:     Testy McTestFace <test@example.com>
+| CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| 
+|     b2 commit
+| 
+| diff --git content content
+| index b18f795..a77bec4 100644
+| --- content
+| +++ content
+| @@ -1 +1 @@
+| -b1 content
+| +b2 content
+| 
+* commit 2312241be3b5d7b8916a82630b080205e37a0804 (HEAD -> b1)
+| Author:     Testy McTestFace <test@example.com>
+| AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| Commit:     Testy McTestFace <test@example.com>
+| CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| 
+|     b1 commit
+| 
+| diff --git content content
+| index d95f3ad..b18f795 100644
+| --- content
+| +++ content
+| @@ -1 +1 @@
+| -content
+| +b1 content
+|   
+| * commit 9bd8ca6c141853262497111f76b6ca016763af06 (main)
+|/  Author:     Testy McTestFace <test@example.com>
+|   AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+|   Commit:     Testy McTestFace <test@example.com>
+|   CommitDate: Sat Apr 1 12:34:56 2023 +0000
+|   
+|       main commit
+|   
+|   diff --git content content
+|   index d95f3ad..ba2906d 100644
+|   --- content
+|   +++ content
+|   @@ -1 +1 @@
+|   -content
+|   +main
+| 
+* commit e3212acb8054392f4f9627b86b4e1a569ee62b9b
+  Author:     Testy McTestFace <test@example.com>
+  AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+  Commit:     Testy McTestFace <test@example.com>
+  CommitDate: Sat Apr 1 12:34:56 2023 +0000
+  
+      Initial commit
+  
+  diff --git content content
+  new file mode 100644
+  index 0000000..d95f3ad
+  --- /dev/null
+  +++ content
+  @@ -0,0 +1 @@
+  +content
+

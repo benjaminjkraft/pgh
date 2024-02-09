@@ -1,0 +1,107 @@
+*   commit 03bc361807117a8f6081c8b021975a8b87d47165 (HEAD -> b3)
+|\  Merge: c877a6e 080fe81
+| | Author:     Testy McTestFace <test@example.com>
+| | AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| | Commit:     Testy McTestFace <test@example.com>
+| | CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| | 
+| |     Merge branch 'refs/heads/b2' into b3
+| |   
+| *   commit 080fe811e8e52608e512d7e2bcba4f43b00a0ca0 (b2)
+| |\  Merge: 1087915 cfc1c10
+| | | Author:     Testy McTestFace <test@example.com>
+| | | AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| | | Commit:     Testy McTestFace <test@example.com>
+| | | CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| | | 
+| | |     Merge branch 'refs/heads/b1' into b2
+| | |   
+| | *   commit cfc1c10ca50e34167c97c8b8aa815825d7003cef (b1)
+| | |\  Merge: 2312241 6684ec1
+| | | | Author:     Testy McTestFace <test@example.com>
+| | | | AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| | | | Commit:     Testy McTestFace <test@example.com>
+| | | | CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| | | | 
+| | | |     Merge branch 'refs/heads/main' into b1
+| | | | 
+| | | * commit 6684ec1e0a5f0dd278d1d6047e68c3e7f599ff50 (main)
+| | | | Author:     Testy McTestFace <test@example.com>
+| | | | AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| | | | Commit:     Testy McTestFace <test@example.com>
+| | | | CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| | | | 
+| | | |     other commit
+| | | | 
+| | | | diff --git other other
+| | | | new file mode 100644
+| | | | index 0000000..e45c9c2
+| | | | --- /dev/null
+| | | | +++ other
+| | | | @@ -0,0 +1 @@
+| | | | +other
+| | | | 
+* | | | commit c877a6e705833efdb686cdaeca349aa6676247b3
+|/ / /  Author:     Testy McTestFace <test@example.com>
+| | |   AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| | |   Commit:     Testy McTestFace <test@example.com>
+| | |   CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| | |   
+| | |       b3 commit
+| | |   
+| | |   diff --git content content
+| | |   index a77bec4..33169c6 100644
+| | |   --- content
+| | |   +++ content
+| | |   @@ -1 +1 @@
+| | |   -b2 content
+| | |   +b3 content
+| | | 
+* | | commit 10879150fc1f4884296c88d2790bc639839d458c
+|/ /  Author:     Testy McTestFace <test@example.com>
+| |   AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+| |   Commit:     Testy McTestFace <test@example.com>
+| |   CommitDate: Sat Apr 1 12:34:56 2023 +0000
+| |   
+| |       b2 commit
+| |   
+| |   diff --git content content
+| |   index b18f795..a77bec4 100644
+| |   --- content
+| |   +++ content
+| |   @@ -1 +1 @@
+| |   -b1 content
+| |   +b2 content
+| | 
+* | commit 2312241be3b5d7b8916a82630b080205e37a0804
+|/  Author:     Testy McTestFace <test@example.com>
+|   AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+|   Commit:     Testy McTestFace <test@example.com>
+|   CommitDate: Sat Apr 1 12:34:56 2023 +0000
+|   
+|       b1 commit
+|   
+|   diff --git content content
+|   index d95f3ad..b18f795 100644
+|   --- content
+|   +++ content
+|   @@ -1 +1 @@
+|   -content
+|   +b1 content
+| 
+* commit e3212acb8054392f4f9627b86b4e1a569ee62b9b
+  Author:     Testy McTestFace <test@example.com>
+  AuthorDate: Sat Apr 1 12:34:56 2023 +0000
+  Commit:     Testy McTestFace <test@example.com>
+  CommitDate: Sat Apr 1 12:34:56 2023 +0000
+  
+      Initial commit
+  
+  diff --git content content
+  new file mode 100644
+  index 0000000..d95f3ad
+  --- /dev/null
+  +++ content
+  @@ -0,0 +1 @@
+  +content
+

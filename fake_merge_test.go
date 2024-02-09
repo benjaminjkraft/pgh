@@ -8,10 +8,20 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/bradleyjkemp/cupaloy/v2"
 	"github.com/go-git/go-git/v5"
 )
 
 var debug = os.Getenv("TEST_DEBUG") != ""
+
+func init() {
+	os.Setenv("GIT_AUTHOR_NAME", "Testy McTestFace")
+	os.Setenv("GIT_AUTHOR_EMAIL", "test@example.com")
+	os.Setenv("GIT_AUTHOR_DATE", "2023-04-01T12:34:56+00:00")
+	os.Setenv("GIT_COMMITTER_NAME", "Testy McTestFace")
+	os.Setenv("GIT_COMMITTER_EMAIL", "test@example.com")
+	os.Setenv("GIT_COMMITTER_DATE", "2023-04-01T12:34:56+00:00")
+}
 
 func runCommands(cwd string, commands string) error {
 	for _, line := range strings.Split(commands, "\n") {
@@ -99,13 +109,13 @@ func assertFileHasConflict(t *testing.T, filename string) {
 	}
 }
 
-func showLog(t *testing.T, tmpdir string) {
-	// TODO: Instead, assert the commit graph, details, etc. are right.
-	// Perhaps via stable author-data + snapshots?
-	// Crazy parser for ASCII graphs?
-	must(t, runCommands(tmpdir, `
-		git --no-pager log --branches --graph --decorate --pretty=fuller -p
-	`))
+func snapshotLog(t *testing.T, tmpdir string) {
+	cmd := exec.Command("git", "--no-pager", "log", "--branches", "--graph", "--decorate", "--pretty=fuller", "-p")
+	cmd.Dir = tmpdir
+	cmd.Stderr = os.Stderr
+	out, err := cmd.Output()
+	must(t, err)
+	cupaloy.SnapshotT(t, out)
 }
 
 func TestFakeMerge(t *testing.T) {
@@ -117,7 +127,7 @@ func TestFakeMerge(t *testing.T) {
 
 	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
 	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
-	showLog(t, tmpdir)
+	snapshotLog(t, tmpdir)
 }
 
 func TestFakeMergeNoArgs(t *testing.T) {
@@ -130,7 +140,5 @@ func TestFakeMergeNoArgs(t *testing.T) {
 	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
 	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
 
-	must(t, runCommands(tmpdir, `
-		git --no-pager log --branches --graph --decorate --pretty=fuller
-	`))
+	snapshotLog(t, tmpdir)
 }

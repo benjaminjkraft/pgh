@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/go-git/go-billy/v5/helper/chroot"
 	"github.com/go-git/go-git/v5"
@@ -65,17 +66,15 @@ func fakeMerge(runner *runner, args ...string) error {
 		return err
 	}
 
-	// Validate() is what sets the author/committer defaults
-	var opts git.CommitOptions
-	err = opts.Validate(runner.repo)
+	author, committer, err := getAuthor(runner.repo)
 	if err != nil {
 		return err
 	}
 
 	// Modifed from worktree.buildCommitObject
 	mergeCommit := &object.Commit{
-		Author:       *opts.Author,
-		Committer:    *opts.Committer,
+		Author:       author,
+		Committer:    committer,
 		Message:      mergeCommitMessage(otherRef, head),
 		TreeHash:     otherCommit.TreeHash,
 		ParentHashes: []plumbing.Hash{head.Hash(), otherRef.Hash()},
@@ -118,6 +117,54 @@ func fakeMerge(runner *runner, args ...string) error {
 	fmt.Fprintf(runner.out, "fake-merged %s\n", otherRefName)
 
 	return nil
+}
+
+func getAuthor(repo *git.Repository) (author, committer object.Signature, err error) {
+	var empty object.Signature
+	// Validate() is what sets the author/committer defaults.
+	var opts git.CommitOptions
+	err = opts.Validate(repo)
+	if err != nil {
+		return empty, empty, err
+	}
+
+	author = *opts.Author
+	committer = *opts.Committer
+
+	// But it doesn't respect the envvars, which we care about for tests. (And
+	// for, you know, actual usage.)
+	if name, ok := os.LookupEnv("GIT_AUTHOR_NAME"); ok {
+		author.Name = name
+	}
+	if email, ok := os.LookupEnv("GIT_AUTHOR_EMAIL"); ok {
+		author.Email = email
+	}
+	if date, ok := os.LookupEnv("GIT_AUTHOR_DATE"); ok {
+		// TODO: match git's date formats.
+		dt, err := time.Parse(time.RFC3339, date)
+		if err != nil {
+			// errors should not pass silently...
+			return empty, empty, err
+		}
+		author.When = dt
+	}
+	if name, ok := os.LookupEnv("GIT_COMMITTER_NAME"); ok {
+		committer.Name = name
+	}
+	if email, ok := os.LookupEnv("GIT_COMMITTER_EMAIL"); ok {
+		committer.Email = email
+	}
+	if date, ok := os.LookupEnv("GIT_COMMITTER_DATE"); ok {
+		// TODO: match git's date formats.
+		dt, err := time.Parse(time.RFC3339, date)
+		if err != nil {
+			// errors should not pass silently...
+			return empty, empty, err
+		}
+		committer.When = dt
+	}
+
+	return author, committer, nil
 }
 
 func callGit(runner *runner, args ...string) error {
