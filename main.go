@@ -14,10 +14,27 @@ type runner struct {
 	out  io.Writer
 }
 
-var commands = map[string]func(*runner, ...string) error{
-	"diff":       diff,
-	"fake-merge": fakeMerge,
-	"merge-up":   mergeUp,
+func help(_ *runner, _ ...string) error {
+	fmt.Println("commands:")
+	for name := range commands {
+		if name[0] == '-' {
+			continue
+		}
+		fmt.Println("\t" + name)
+	}
+	return nil
+}
+
+var commands map[string]func(*runner, ...string) error
+
+func init() {
+	commands = map[string]func(*runner, ...string) error{
+		"diff":       diff,
+		"fake-merge": fakeMerge,
+		"merge-up":   mergeUp,
+		"-h":         help,
+		"--help":     help,
+	}
 }
 
 func Main() {
