@@ -121,7 +121,7 @@ func fakeMerge(runner *runner, args ...string) error {
 		return err
 	}
 
-	fmt.Fprintf(runner.out, "fake-merged %s", otherRefName)
+	fmt.Fprintf(runner.out, "fake-merged %s\n", otherRefName)
 
 	return nil
 }
