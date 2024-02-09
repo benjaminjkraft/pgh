@@ -100,6 +100,9 @@ func assertFileHasConflict(t *testing.T, filename string) {
 }
 
 func showLog(t *testing.T, tmpdir string) {
+	// TODO: Instead, assert the commit graph, details, etc. are right.
+	// Perhaps via stable author-data + snapshots?
+	// Crazy parser for ASCII graphs?
 	must(t, runCommands(tmpdir, `
 		git --no-pager log --branches --graph --decorate --pretty=fuller -p
 	`))
@@ -114,7 +117,6 @@ func TestFakeMerge(t *testing.T) {
 
 	assertFileHasContent(t, path.Join(tmpdir, "content"), "main content")
 	assertFileHasContent(t, path.Join(tmpdir, "untracked"), "untracked")
-	// TODO: Assert the commit graph, details, etc. are right.
 	showLog(t, tmpdir)
 }
 
@@ -131,5 +133,4 @@ func TestFakeMergeNoArgs(t *testing.T) {
 	must(t, runCommands(tmpdir, `
 		git --no-pager log --branches --graph --decorate --pretty=fuller
 	`))
-	// TODO: Assert the commit graph, details, etc. are right.
 }

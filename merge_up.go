@@ -55,6 +55,7 @@ func mergeUp(runner *runner, _ ...string) error {
 		if err != nil {
 			return err
 		}
+		// TODO: option to rebase?? for the annoying people
 		err = callGit(runner, "merge") // (defaults to the upstream)
 		if err != nil {
 			// TODO: nice message + tell you what's left on merge
