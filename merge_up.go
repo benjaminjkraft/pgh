@@ -58,9 +58,13 @@ func mergeUp(runner *runner, _ ...string) error {
 		err = callGit(runner, "merge") // (defaults to the upstream)
 		if err != nil {
 			// TODO: nice message + tell you what's left on merge
+			// TODO: have a way to resume? (not needed for stack -- just run
+			// again)
 			return err
 		}
 	}
+
+	// TODO: push the branches if requested
 
 	return nil
 }
