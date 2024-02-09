@@ -11,11 +11,11 @@ import (
 )
 
 // TODO(benkraft): unit tests
-func upstream(runner *runner, ref *plumbing.Reference) plumbing.ReferenceName {
-	if !ref.Name().IsBranch() {
+func upstream(runner *runner, refName plumbing.ReferenceName) plumbing.ReferenceName {
+	if !refName.IsBranch() {
 		return ""
 	}
-	b, err := runner.repo.Branch(ref.Name().Short())
+	b, err := runner.repo.Branch(refName.Short())
 	if err != nil {
 		return ""
 	}
@@ -34,7 +34,7 @@ func fakeMerge(runner *runner, args ...string) error {
 	var otherRefName plumbing.ReferenceName
 	switch len(args) {
 	case 0:
-		otherRefName = upstream(runner, head)
+		otherRefName = upstream(runner, head.Name())
 		if otherRefName == "" {
 			return fmt.Errorf("no upstream for %v, so must pass branch-name", head.Name())
 		}
