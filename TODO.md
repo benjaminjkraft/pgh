@@ -24,5 +24,6 @@ thoughts on what to prioritize Jan 2024:
 - then actually tie it together, do all the silly mechanics
 
 for fake-merge:
+- kinda confusing if upstream isn't main (e.g. you're on -2 and forgot to update it)
 
 for merge-up:
