@@ -27,3 +27,4 @@ for fake-merge:
 - kinda confusing if upstream isn't main (e.g. you're on -2 and forgot to update it)
 
 for merge-up:
+- option to push all modified branches
