@@ -28,3 +28,6 @@ for fake-merge:
 
 for merge-up:
 - option to push all modified branches
+
+next:
+- shortcut to create next PR in stack, doesn't have to be clever but even link to the right diff is nice
